@@ -5,6 +5,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const registerUser = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const userInDb = await User.findOne({ email });
+
+  if (userInDb) {
+    res.status(StatusCodes.CONFLICT);
+    throw new Error("Error! Email already exists");
+  }
   const user = await User.create({ ...req.body });
 
   // Generate token
